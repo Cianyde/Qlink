@@ -14,11 +14,6 @@ public class PlayerMovemet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Vector3 beans = new Vector3(1.0f, 0.0f, 0.0f);
-            transform.localScale += beans;
-            Debug.Log(debugText);
-        }
+
     }
 }
