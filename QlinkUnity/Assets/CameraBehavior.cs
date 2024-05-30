@@ -14,7 +14,7 @@ public class CameraBehavior : MonoBehaviour
 
     public float rotationSpeed;
 
-    void Start()
+    private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -29,7 +29,7 @@ public class CameraBehavior : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        Vector3 inputDirection = orientation.forward * horizontalInput + orientation.right * horizontalInput;
+        Vector3 inputDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
         if (inputDirection != Vector3.zero)
         {
