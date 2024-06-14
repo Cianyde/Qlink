@@ -14,6 +14,10 @@ public class PlayerShooterController : MonoBehaviour
     [SerializeField] private float aimSensitivity;
     [SerializeField] private LayerMask aimColliderMask;
     [SerializeField] private Transform debugTransform;
+    [SerializeField] private Transform missVFX;
+    [SerializeField] private Transform hitVFX;
+
+
 
     private ThirdPersonController thirdPersonController;
     private StarterAssetsInputs input;
@@ -35,10 +39,12 @@ public class PlayerShooterController : MonoBehaviour
 
         Vector2 ScreenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
         Ray ray = Camera.main.ScreenPointToRay(ScreenCenterPoint);
+        Transform hitTransform = null;
         if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderMask))
         {
             debugTransform.position = raycastHit.point;
             mouseWorldPosition = raycastHit.point;
+            hitTransform = raycastHit.transform;
         }
 
         if (input.aim)
@@ -53,6 +59,23 @@ public class PlayerShooterController : MonoBehaviour
             Vector3 aimDirection = (worldAimInput - transform.position).normalized;
 
             transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
+            if (input.shoot)
+            {
+                if (hitTransform != null)
+                {
+                    if (hitTransform.GetComponent<BulletTarget>() != null)
+                    {
+                        Instantiate(hitVFX, transform.position, Quaternion.identity);
+                    }
+                    else
+                    {
+                        {
+                            Instantiate(missVFX, transform.position, Quaternion.identity);
+                        }
+                    }
+                }
+                input.shoot = false;
+            }
         }
         else
         {

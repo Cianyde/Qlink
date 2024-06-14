@@ -60,13 +60,38 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.30f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\_\Stuff\Shaders\ShaderGraph\Scripts\DissolveAnimate.cs" />
+    <Compile Include="Assets\_\Stuff\Shaders\ShaderGraph\Scripts\PixelateAnimated.cs" />
     <Compile Include="Assets\Starter Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\_\Stuff\Shaders\ShaderGraph\Scripts\BlurAnimated.cs" />
+    <Compile Include="Assets\QlinkCustoms\Enemy\BulletTarget.cs" />
     <Compile Include="Assets\QlinkCustoms\Core\PlayerShooterController.cs" />
     <Compile Include="Assets\QlinkCustoms\Legacy\CameraBehavior.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\_\Stuff\Shaders\VertexLitCG.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_UI_SolidColorTint.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_Sprites_Hue.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_UI_Blur.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_Sprites_Outline.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_TestUnlit.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_TransColor.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_Sprites_Shadow.shader" />
+    <None Include="Assets\_\Stuff\Shaders\MultiplyTwoTextures.shader" />
     <None Include="Assets\Starter Assets\Sample\Environment\Shaders\Built-in_RP\Triplanar.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_TransDiffuseWithTint.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_TransDiffuse.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_Sprites_SolidColorTint.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_FogOfWarPersistenEffect.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_Sprites_Shadow_Vertical.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_Sprites_Default.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_BW.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_UI_Greyscale.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_Sprites_Test.shader" />
+    <None Include="Assets\_\Stuff\Shaders\Endless_TransDiffuse_Alpha.shader" />
     <None Include="Assets\Starter Assets\Sample\Environment\Shaders\Built-in_RP\ArmatureShader.shader" />
+    <None Include="Assets\_\Stuff\Shaders\3DText.shader" />
+    <None Include="Assets\_\Stuff\Shaders\GrayscaleToAlpha.shader" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
