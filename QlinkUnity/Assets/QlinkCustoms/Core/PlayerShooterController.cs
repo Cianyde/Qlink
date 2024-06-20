@@ -65,12 +65,12 @@ public class PlayerShooterController : MonoBehaviour
                 {
                     if (hitTransform.GetComponent<BulletTarget>() != null)
                     {
-                        Instantiate(hitVFX, transform.position, Quaternion.identity);
+                        Instantiate(hitVFX, raycastHit.point, Quaternion.identity);
                     }
                     else
                     {
                         {
-                            Instantiate(missVFX, transform.position, Quaternion.identity);
+                            Instantiate(missVFX, raycastHit.point, Quaternion.identity);
                         }
                     }
                 }
