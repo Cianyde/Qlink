@@ -15,6 +15,7 @@ namespace StarterAssets
 		public bool sprint;
 		public bool aim;
         public bool shoot;
+        public bool parry;
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -55,6 +56,11 @@ namespace StarterAssets
         {
 			ShootInput(value.isPressed);
         }
+
+        public void OnParry(InputValue value)
+        {
+			ParryInput(value.isPressed);
+        }
 #endif
 
 
@@ -87,6 +93,10 @@ namespace StarterAssets
             shoot = newShootState;
         }
 
+        private void ParryInput(bool newParryState)
+        {
+            parry = newParryState;
+        }
         private void OnApplicationFocus(bool hasFocus)
 		{
 			SetCursorState(cursorLocked);

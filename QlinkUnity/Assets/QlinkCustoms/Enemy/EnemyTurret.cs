@@ -10,6 +10,9 @@ public class EnemyTurret : MonoBehaviour
     [SerializeField] private Transform pfBulletProjectile;
     [SerializeField] private Transform bulletSpawn;
     [SerializeField] private float fireRate = 1f;
+    [SerializeField] private LayerMask layer;
+    [SerializeField] private float targetDistance = 300f;
+    
 
 
     private float fireReady;
@@ -22,26 +25,33 @@ public class EnemyTurret : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print("fireRate: " + fireReady);
-        float playerDistance = Vector3.Distance(playerTargetTransform.position, gameObject.transform.position);
+        float playerDistance = Vector3.Distance(playerTargetTransform.position, bulletSpawn.transform.position);
         if (fireReady > fireRate)
         {
-            if (playerDistance < 300f)
-            { 
-                fireReady += Time.deltaTime; 
-                Vector3 aimDirection = (playerTargetTransform.position - gameObject.transform.position).normalized;
+            fireReady = 0;
+            if (playerDistance < targetDistance)
+            {
+                //Debug.Log("within Distance");
+                Vector3 aimDirection = (playerTargetTransform.position - bulletSpawn.transform.position).normalized;
                 Ray playerCheck = new Ray(bulletSpawn.position, aimDirection);
                 RaycastHit hitInfo;
-
-                if (Physics.Raycast(playerCheck, out hitInfo, 999f))
+                Debug.DrawRay(bulletSpawn.position, aimDirection * targetDistance, Color.red, 2f);
+                if (Physics.Raycast(playerCheck, out hitInfo, targetDistance + 5f))
                 {
                     if (hitInfo.collider.gameObject.GetComponent<PlayerShooterController>() != null)
                     {
                         Instantiate(pfBulletProjectile, bulletSpawn.position, Quaternion.LookRotation(aimDirection, Vector3.up));
                     }
+                    else
+                    {
+                        Debug.Log("hitInfo: " + hitInfo.collider.gameObject.name);
+                    }
                 }
             }
         }
-        fireReady = 0;
+        else
+        {
+            fireReady += Time.deltaTime;
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using StarterAssets;
+using Unity.VisualScripting;
 using UnityEngine.Rendering;
 
 public class PlayerShooterController : MonoBehaviour
@@ -15,12 +16,16 @@ public class PlayerShooterController : MonoBehaviour
     [SerializeField] private LayerMask aimColliderMask = 0;
     [SerializeField] private Transform missVFX = null;
     [SerializeField] private Transform hitVFX = null;
+
+    [SerializeField] private float parryTime = 1f;
+
     //[SerializeField] private Transform debugTransform;
 
 
 
     private ThirdPersonController thirdPersonController;
     private StarterAssetsInputs input;
+    private float parryIncrement;
 
     // Start is called before the first frame update
     private void Awake()
@@ -30,6 +35,8 @@ public class PlayerShooterController : MonoBehaviour
 
         normalSensitivity = Mathf.Max(normalSensitivity, 0.1f);
         aimSensitivity = Mathf.Max(aimSensitivity, 0.1f);
+
+
     }
 
     // Update is called once per frame
@@ -86,5 +93,21 @@ public class PlayerShooterController : MonoBehaviour
                 thirdPersonController.SetRotateOnMove(true);
             }
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        parryIncrement += Time.deltaTime;
+        if (input.parry && parryIncrement < parryTime)
+        {
+            Debug.Log("parried!!!!");
+            parryIncrement = 0f;
+            input.parry = false;
+        }
+        else
+        {
+            Debug.Log("lol u succ!!!!");
+        }
+        other.gameObject.SetActive(false);
     }
 }
