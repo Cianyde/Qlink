@@ -8,14 +8,14 @@ using UnityEngine.Rendering;
 
 public class PlayerShooterController : MonoBehaviour
 {
-    [SerializeField] private CinemachineVirtualCamera aimVirtualCamera;
-    [SerializeField] private Canvas crosshair;
-    [SerializeField] private float normalSensitivity;
-    [SerializeField] private float aimSensitivity;
-    [SerializeField] private LayerMask aimColliderMask;
-    [SerializeField] private Transform debugTransform;
-    [SerializeField] private Transform missVFX;
-    [SerializeField] private Transform hitVFX;
+    [SerializeField] private CinemachineVirtualCamera aimVirtualCamera = null;
+    [SerializeField] private Canvas crosshair = null;
+    [SerializeField] private float normalSensitivity = 0f;
+    [SerializeField] private float aimSensitivity = 0f;
+    [SerializeField] private LayerMask aimColliderMask = 0;
+    [SerializeField] private Transform missVFX = null;
+    [SerializeField] private Transform hitVFX = null;
+    //[SerializeField] private Transform debugTransform;
 
 
 
@@ -42,7 +42,7 @@ public class PlayerShooterController : MonoBehaviour
         Transform hitTransform = null;
         if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderMask))
         {
-            debugTransform.position = raycastHit.point;
+            //debugTransform.position = raycastHit.point;
             mouseWorldPosition = raycastHit.point;
             hitTransform = raycastHit.transform;
         }
@@ -63,14 +63,16 @@ public class PlayerShooterController : MonoBehaviour
             {
                 if (hitTransform != null)
                 {
-                    if (hitTransform.GetComponent<BulletTarget>() != null)
+                    if (hitTransform.GetComponent<EnemyTurret>() != null)
                     {
                         Instantiate(hitVFX, transform.position, Quaternion.identity);
+                        print("hit");
                     }
                     else
                     {
                         {
                             Instantiate(missVFX, transform.position, Quaternion.identity);
+                            print("miss");
                         }
                     }
                 }
