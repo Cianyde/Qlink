@@ -61,7 +61,7 @@
                 },
                 {
                     "name": "Parry",
-                    "type": "Button",
+                    "type": "PassThrough",
                     "id": "4fe23481-0e16-456c-9271-25f3ffef7281",
                     "expectedControlType": "Button",
                     "processors": "",

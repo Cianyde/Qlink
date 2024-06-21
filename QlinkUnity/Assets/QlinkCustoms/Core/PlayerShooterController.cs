@@ -6,6 +6,7 @@ using Cinemachine;
 using StarterAssets;
 using Unity.VisualScripting;
 using UnityEngine.Rendering;
+using UnityEngine.UIElements;
 
 public class PlayerShooterController : MonoBehaviour
 {
@@ -16,16 +17,31 @@ public class PlayerShooterController : MonoBehaviour
     [SerializeField] private LayerMask aimColliderMask = 0;
     [SerializeField] private Transform missVFX = null;
     [SerializeField] private Transform hitVFX = null;
+    [SerializeField] private Transform parryVFX = null;
+    [SerializeField] private Transform blockVFX = null;
+    [SerializeField] private Transform takeDamageVFX = null;
+    [SerializeField] private int chargeMax = 100;
+    [SerializeField] private int chargeAmount = 20;
+    [SerializeField] private int blockReduction = -10;
+
 
     [SerializeField] private float parryTime = 1f;
 
     //[SerializeField] private Transform debugTransform;
 
-
-
     private ThirdPersonController thirdPersonController;
     private StarterAssetsInputs input;
+
+    //parry and projectile condition
     private float parryIncrement;
+    private bool canParry = true;
+    private bool parried = false;
+    private bool bIsProjectile;
+    private Vector3 impactPoint = Vector3.zero;
+
+    //charging
+    private int chargeProgress;
+    private bool canShoot = false;
 
     // Start is called before the first frame update
     private void Awake()
@@ -56,11 +72,14 @@ public class PlayerShooterController : MonoBehaviour
 
         if (input.aim)
         {
+            //can't parry while aiming, changing cameraObject and setting new sensitivity
+            canParry = false;
             aimVirtualCamera.gameObject.SetActive(true);
             crosshair.gameObject.SetActive(true);
             thirdPersonController.SetSensitivity(aimSensitivity);
             thirdPersonController.SetRotateOnMove(false);
 
+            //calculating aimDirection using mouse position while using player character's transform
             Vector3 worldAimInput = mouseWorldPosition;
             worldAimInput.y = transform.position.y;
             Vector3 aimDirection = (worldAimInput - transform.position).normalized;
@@ -68,20 +87,30 @@ public class PlayerShooterController : MonoBehaviour
             transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
             if (input.shoot)
             {
-                if (hitTransform != null)
+                Debug.Log("can't shoot lmao");
+                Debug.Log("progress: " + chargeProgress);
+
+                if (checkCharge())
                 {
-                    if (hitTransform.GetComponent<EnemyTurret>() != null)
+                    if (hitTransform != null)
                     {
-                        Instantiate(hitVFX, raycastHit.point, Quaternion.identity);
-                    }
-                    else
-                    {
+                        if (hitTransform.GetComponent<EnemyTurret>() != null)
                         {
-                            Instantiate(missVFX, raycastHit.point, Quaternion.identity);
+                            Instantiate(hitVFX, raycastHit.point, Quaternion.identity);
+                        }
+                        else
+                        {
+                            {
+                                Instantiate(missVFX, raycastHit.point, Quaternion.identity);
+                            }
                         }
                     }
+                    canShoot = false;
+                    chargeProgress = 0;
+                    input.shoot = false;
+                    canParry = true;
                 }
-                input.shoot = false;
+
             }
         }
         else
@@ -91,23 +120,82 @@ public class PlayerShooterController : MonoBehaviour
                 crosshair.gameObject.SetActive(false);
                 thirdPersonController.SetSensitivity(normalSensitivity);
                 thirdPersonController.SetRotateOnMove(true);
+                canParry = true;
             }
         }
+
+        if (canParry && bIsProjectile)
+        {
+            parryIncrement += Time.deltaTime;
+            Parry();
+        }
+
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        parryIncrement += Time.deltaTime;
-        if (input.parry && parryIncrement < parryTime)
+        if (other.GetComponent<BulletProjectile>() != null)
         {
-            Debug.Log("parried!!!!");
-            parryIncrement = 0f;
-            input.parry = false;
+            bIsProjectile = true;
+            impactPoint = other.transform.position;
+            other.gameObject.SetActive(false);
+        }
+    }
+
+    private void Parry()
+    {
+            //parry
+            if (input.parry && parryIncrement < parryTime)
+            {
+                Debug.Log("parried!!!!");
+                Instantiate(parryVFX, impactPoint, Quaternion.identity);
+                parryIncrement = 0f;
+                input.parry = false;
+                parried = true;
+                updateCharge();
+            }
+            //block
+            else if (Input.GetKey(KeyCode.E))
+            {
+                Debug.Log("blocked!!!!");
+                Instantiate(blockVFX, impactPoint, Quaternion.identity);
+                parried = false;
+                updateCharge();
+            }
+            //fuck around n find out
+            else
+            {
+                Debug.Log("lol u succ!!!!");
+                Instantiate(takeDamageVFX, impactPoint, Quaternion.identity);
+            }
+            bIsProjectile = false;
+    }
+
+    private void updateCharge()
+    {
+        int chargeVar = 0;
+        if (parried)
+        {
+            chargeVar = chargeAmount;
         }
         else
         {
-            Debug.Log("lol u succ!!!!");
+            chargeVar = blockReduction;
         }
-        other.gameObject.SetActive(false);
+
+        chargeProgress += chargeVar;
+        if (chargeProgress > chargeMax)
+        {
+            chargeProgress = chargeMax;
+        }
+    }
+
+    private bool checkCharge()
+    {
+        if (chargeProgress >= chargeMax)
+        {
+            canShoot = true;
+        }
+        return canShoot;
     }
 }
