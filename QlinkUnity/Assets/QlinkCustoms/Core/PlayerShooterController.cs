@@ -22,7 +22,7 @@ public class PlayerShooterController : MonoBehaviour
     [SerializeField] private Transform takeDamageVFX = null;
     [SerializeField] private int chargeMax = 100;
     [SerializeField] private int chargeAmount = 20;
-    [SerializeField] private int blockReduction = -10;
+    [SerializeField] private int blockReduction = 10;
 
 
     [SerializeField] private float parryTime = 1f;
@@ -31,6 +31,7 @@ public class PlayerShooterController : MonoBehaviour
 
     private ThirdPersonController thirdPersonController;
     private StarterAssetsInputs input;
+    private Animator animator;
 
     //parry and projectile condition
     private float parryIncrement;
@@ -48,11 +49,10 @@ public class PlayerShooterController : MonoBehaviour
     {
         thirdPersonController = GetComponent<ThirdPersonController>();
         input = GetComponent<StarterAssetsInputs>();
+        animator = GetComponent<Animator>();
 
         normalSensitivity = Mathf.Max(normalSensitivity, 0.1f);
         aimSensitivity = Mathf.Max(aimSensitivity, 0.1f);
-
-
     }
 
     // Update is called once per frame
@@ -78,6 +78,8 @@ public class PlayerShooterController : MonoBehaviour
             crosshair.gameObject.SetActive(true);
             thirdPersonController.SetSensitivity(aimSensitivity);
             thirdPersonController.SetRotateOnMove(false);
+            animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
+
 
             //calculating aimDirection using mouse position while using player character's transform
             Vector3 worldAimInput = mouseWorldPosition;
@@ -88,7 +90,6 @@ public class PlayerShooterController : MonoBehaviour
             if (input.shoot)
             {
                 Debug.Log("can't shoot lmao");
-                Debug.Log("progress: " + chargeProgress);
 
                 if (checkCharge())
                 {
@@ -99,14 +100,12 @@ public class PlayerShooterController : MonoBehaviour
                             Instantiate(hitVFX, raycastHit.point, Quaternion.identity);
                         }
                         else
-                        {
-                            {
-                                Instantiate(missVFX, raycastHit.point, Quaternion.identity);
-                            }
+                        { 
+                            Instantiate(missVFX, raycastHit.point, Quaternion.identity);
                         }
+                        chargeProgress = 0;
                     }
                     canShoot = false;
-                    chargeProgress = 0;
                     input.shoot = false;
                     canParry = true;
                 }
@@ -120,6 +119,9 @@ public class PlayerShooterController : MonoBehaviour
                 crosshair.gameObject.SetActive(false);
                 thirdPersonController.SetSensitivity(normalSensitivity);
                 thirdPersonController.SetRotateOnMove(true);
+                animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 0f, Time.deltaTime * 10f));
+
+
                 canParry = true;
             }
         }
@@ -137,7 +139,7 @@ public class PlayerShooterController : MonoBehaviour
         if (other.GetComponent<BulletProjectile>() != null)
         {
             bIsProjectile = true;
-            impactPoint = other.transform.position;
+            impactPoint = other.ClosestPointOnBounds(other.transform.position);
             other.gameObject.SetActive(false);
         }
     }
@@ -180,7 +182,7 @@ public class PlayerShooterController : MonoBehaviour
         }
         else
         {
-            chargeVar = blockReduction;
+            chargeVar = -blockReduction;
         }
 
         chargeProgress += chargeVar;
@@ -188,6 +190,13 @@ public class PlayerShooterController : MonoBehaviour
         {
             chargeProgress = chargeMax;
         }
+        if (chargeProgress < 0)
+        {
+            chargeProgress = 0;
+        }
+
+        Debug.Log("progress: " + chargeProgress);
+        Debug.Log("parried: " + parried);
     }
 
     private bool checkCharge()
